@@ -1,20 +1,19 @@
-# Usa imagem base oficial do Python
+# Use imagem oficial Python como base
 FROM python:3.10-slim
 
-# Define o diretório de trabalho dentro do contêiner
+# Define diretório de trabalho
 WORKDIR /app
 
-# Copia os arquivos do projeto para dentro do contêiner
+# Copia os arquivos requirements.txt e o código para dentro do container
+COPY requirements.txt ./
 COPY . .
 
-# Instala as dependências
-RUN pip install --no-cache-dir -r requirements.txt
+# Atualiza pip e instala dependências
+RUN pip install --upgrade pip
+RUN pip install -r requirements.txt
 
-# Expõe a porta usada pelo Flet (será substituída pela variável de ambiente PORT no Cloud Run)
+# Expõe a porta padrão usada pelo Flet
 EXPOSE 8080
 
-# Define a variável de ambiente PORT para o Flet usar
-ENV PORT 8080
-
-# Comando para rodar o app
+# Comando para rodar sua aplicação
 CMD ["python", "main.py"]
