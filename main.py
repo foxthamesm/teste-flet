@@ -1,7 +1,7 @@
 import os
 import base64
 import flet as ft 
-from fletcarousel import BasicAnimatedHorizontalCarousel as bc, HintLine, AutoCycle
+from fletcarousel import BasicAnimatedHorizontalCarousel as bc
 
 
 def main(page: ft.Page):
