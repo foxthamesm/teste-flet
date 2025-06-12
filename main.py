@@ -25,13 +25,16 @@ def main(page: ft.Page):
         if e.files:
             for f in e.files:
                 if len(list_img_to_cadastrar) < 4:
-                    file_bytes = f.read_bytes()
+                    file_bytes = f.bytes  # <- aqui usamos o atributo correto
                     base64_str = base64.b64encode(file_bytes).decode("utf-8")
                     list_img_to_cadastrar.append(base64_str)
-                    img_container.controls.append(ft.Image(src_base64=base64_str, width=100, height=100, fit=ft.ImageFit.COVER))
+                    img_container.controls.append(
+                        ft.Image(src_base64=base64_str, width=100, height=100, fit=ft.ImageFit.COVER)
+                    )
                     page.update()
-    
+
     file_picker.on_result = on_files_selected
+
 
     def add_images_to_cadastrar(e):
         if len(list_img_to_cadastrar) >= 4:
