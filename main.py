@@ -25,15 +25,24 @@ def main(page: ft.Page):
         if e.files:
             for f in e.files:
                 if len(list_img_to_cadastrar) < 4:
-                    file_bytes = f.bytes  # <- aqui usamos o atributo correto
+                    file_bytes = f.bytes
                     base64_str = base64.b64encode(file_bytes).decode("utf-8")
                     list_img_to_cadastrar.append(base64_str)
                     img_container.controls.append(
                         ft.Image(src_base64=base64_str, width=100, height=100, fit=ft.ImageFit.COVER)
                     )
-                    page.update()
+                else:
+                    page.dialog = ft.AlertDialog(
+                        title=ft.Text("Limite atingido"),
+                        content=ft.Text("Você pode adicionar no máximo 4 imagens."),
+                        actions=[ft.TextButton("Ok", on_click=lambda e: page.dialog.close())]
+                    )
+                    page.dialog.open = True
+                    break
+            page.update()
 
     file_picker.on_result = on_files_selected
+
 
 
     def add_images_to_cadastrar(e):
