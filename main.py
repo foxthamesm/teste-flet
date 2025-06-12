@@ -214,4 +214,4 @@ def main(page: ft.Page):
     page.add(layout)
 
 port = int(os.environ.get("PORT", 8080))
-ft.app(target=main, view=ft.WEB_BROWSER, port=port)
+ft.app(target=main, view="web_browser", port=port)
