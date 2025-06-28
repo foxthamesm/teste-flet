@@ -17,5 +17,5 @@ RUN pip install -r requirements.txt
 EXPOSE 8080
 
 # Comando para rodar sua aplicação
->>>>>>> a78a355c162360b1ffa951b245841d0dbb05e1db
+#>>>>>>> a78a355c162360b1ffa951b245841d0dbb05e1db
 CMD ["python", "main.py"]
