@@ -2,14 +2,14 @@ import os
 import base64
 import flet as ft 
 from fletcarousel import BasicAnimatedHorizontalCarousel as bc, HintLine, AutoCycle
-
+import requests
 
 def main(page: ft.Page):
     page.title = 'Menu'
     page.theme = ft.Theme()
     page.theme_mode = ft.ThemeMode.DARK
 
-
+    link_mostrar_image = ''
 
 
 
@@ -29,13 +29,18 @@ def main(page: ft.Page):
         if e.files:
             for f in e.files:
                 if len(list_img_to_cadastrar) < 4:
-                    file_bytes = f.read_bytes()
-                    base64_str = base64.b64encode(file_bytes).decode("utf-8")
-                    list_img_to_cadastrar.append(base64_str)
-                    img_container.controls.append(ft.Image(src_base64=base64_str, width=100, height=100, fit=ft.ImageFit.COVER))
-                    page.update()
-    
+                    list_img_to_cadastrar.append(f)
+                    print('lista criada')                    
+                
+
+    def on_upload_event(e: ft.FilePickerUploadEvent):
+        print("Entramos na função de UPLOADS")
+        print(e)
+
     file_picker.on_result = on_files_selected
+    file_picker.on_upload = on_upload_event
+
+
 
     def add_images_to_cadastrar(e):
         if len(list_img_to_cadastrar) >= 4:
@@ -58,41 +63,74 @@ def main(page: ft.Page):
 
 
     nome_produto_cadastro = ft.TextField(label='Nome do Produto', color='#ffffff')
-    Valor_promocional = ft.TextField(label='Valor Promocional', color='#ffffff')
+    descricao_produto_cadastro = ft.TextField(label='Descrição do Produto', color='#ffffff', multiline=True)
+    Valor_promocional = ft.TextField(label='Valor Promocional', color='#ffffff') #preço de venda
     codigo_produto = ft.TextField(label='Codigo Produto', color='#ffffff')
+    unidade_de_medida = ft.TextField(label='Unidade de Media', color='#ffffff')
+    quantidade_estoque = ft.TextField(label='Qntd. Estoque', color='#ffffff')
+    link_produto = ft.TextField(label='Link produto', color='#ffffff')
+
+    def cadastrar_produto(e):
+        api_url = "https://api-flet.onrender.com/cadastrar_produto/" #Alterar o nome do Endpoint para Cadastrar Images, criar um Endpoint para cadastro Produto
+        link_upload = []
+        data = {
+            'Cnome_produto': nome_produto_cadastro.value,
+            'Cdescricao_produto_cadastro':descricao_produto_cadastro.value,
+            'CValor_promocional': Valor_promocional.value, 
+            'Ccodigo_produto': codigo_produto.value,
+            'Cunidade_de_medida': unidade_de_medida.value,
+            'Cquantidade_estoque': quantidade_estoque.value,
+            'Clink_produto': link_produto.value,
+            'Cimages':[]
+        }
+        
+        for f in list_img_to_cadastrar:
+            with open(f.path, 'rb') as file_obj:
+                print('abriu o path')
+                try:
+                    files = {'file': (f.name, file_obj, 'application/octet-stream')}
+                    response = requests.post(api_url, files=files)
+            
+                    if response.status_code == 200:
+                        dados = response.json()
+                        link_upload.append(dados['url'])
+                        print(link_upload)
+                        print('UPLOAD FEITO')
+                    else:
+                        print(f'O NOSSO CÓDIGO DE RESPOSTA FOI {response.status_code}')
+                except Exception as e:
+                    print(f'Erro ao enviar através do Path {e}')
+            data['Cimages'] = link_upload
+        
     
-    def mudando_valor_no_dropdown_cadastro(e):
-        frequencia_exibicao.value = frequencia_exibicao.value
-        page.update()
 
-    frequencia_exibicao = ft.Dropdown(
-        label='Frequência de exibição',
-        hint_text='Selecione...',
-        options=[
-            ft.dropdown.Option("Aleatória"),
-            ft.dropdown.Option("Agendada"),
-            ft.dropdown.Option("Não exibir"),
-            ft.dropdown.Option("Obrigatório"),
-        ],
-        on_change=mudando_valor_no_dropdown_cadastro
-    )
-
-    controle_visualizacao = ft.Checkbox(label='Controle de Visualização')
 
     frame_cadastro_produto = ft.Container(
         content=ft.Column(
             controls=[
                 ft.Row(
                     controls=[
-                        btn_add_img_to_cadastrar,
+                        ft.Column(
+                            controls=[
+                                btn_add_img_to_cadastrar,
+                                ft.ElevatedButton(text="Cadastrar Produto", on_click=cadastrar_produto)
+                            ],
+                            alignment=ft.MainAxisAlignment.CENTER
+                        ),
                         ft.Column(
                             controls=[
                                 frame_images_cadastro,
                                 nome_produto_cadastro,
+                                descricao_produto_cadastro,
                                 Valor_promocional,
-                                codigo_produto,
-                                frequencia_exibicao,
-                                controle_visualizacao
+                                codigo_produto
+                            ]
+                        ),
+                        ft.Column(
+                            controls=[
+                                unidade_de_medida,
+                                quantidade_estoque,
+                                link_produto
                             ]
                         )
                     ]
@@ -102,12 +140,13 @@ def main(page: ft.Page):
         visible=False,
         bgcolor='#838383',
         border_radius=30,
-        width=500
+        width=890,
+        margin=0
     )
 
     def show_cadastro(e):
         frame_cadastro_produto.visible = not frame_cadastro_produto.visible
-        page.update()
+        page.update()       
 
     #EDITAR PRODUTO  < ------------
     list_img_to_editar = []
@@ -119,15 +158,12 @@ def main(page: ft.Page):
         visible=True
     )
 
-    def on_files_selected(e: ft.FilePickerResultEvent):
+    def on_files_selected_edit(e: ft.FilePickerResultEvent):
         if e.files:
             for f in e.files:
                 if len(list_img_to_editar) < 4:
-                    file_bytes = f.read_bytes()
-                    base64_str = base64.b64encode(file_bytes).decode("utf-8")
-                    list_img_to_editar.append(base64_str)
-                    img_container.controls.append(ft.Image(src_base64=base64_str, width=100, height=100, fit=ft.ImageFit.COVER))
-                    page.update()
+                    print('em edição')
+                    
     
     file_picker.on_result = on_files_selected
 
@@ -218,7 +254,8 @@ def main(page: ft.Page):
             items=[
                 ft.Image(
                     src="https://picsum.photos/200/300",
-                    height=150,
+                    height=300,
+                    width=300,
                     fit=ft.ImageFit.CONTAIN,
                 ),
             ],
@@ -339,4 +376,4 @@ def main(page: ft.Page):
 
 
 port = int(os.environ.get("PORT", 8080))
-ft.app(target=main, view=ft.WEB_BROWSER, port=port)
+ft.app(target=main, upload_dir='assets/uploads', assets_dir='assets')
