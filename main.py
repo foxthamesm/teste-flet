@@ -18,24 +18,34 @@ def main(page: ft.Page):
     file_picker = ft.FilePicker()
     page.overlay.append(file_picker)
 
-    img_container = ft.Row(wrap=True, spacing=10, )
+    img_container = ft.Row(spacing=10)
     frame_images_cadastro = ft.Container(
         content=img_container,
         width=200,
         visible=True
     )
-
+    list_two = []
     def on_files_selected(e: ft.FilePickerResultEvent):
         if e.files:
             for f in e.files:
                 if len(list_img_to_cadastrar) < 4:
                     list_img_to_cadastrar.append(f)
+                    link_temporary = page.get_upload_url(f.name, expires=600)
+                    list_two.append(ft.FilePickerUploadFile(
+                        name=f.name,
+                        upload_url=link_temporary
+                    ))
+                    file_picker.upload(list_two)
                     print('lista criada')                    
                 
 
     def on_upload_event(e: ft.FilePickerUploadEvent):
         print("Entramos na função de UPLOADS")
-        print(e)
+        print(e.progress)
+        print(f"/assets/uploads/{e.file_name}" )
+        img_container.controls.append(ft.Image(src=f"assets/uploads/{e.file_name}"))
+        img_container.update()
+        page.update()
 
     file_picker.on_result = on_files_selected
     file_picker.on_upload = on_upload_event
@@ -72,7 +82,7 @@ def main(page: ft.Page):
 
     def cadastrar_produto(e):
         api_url = "https://api-flet.onrender.com/cadastrar_produto/" #Alterar o nome do Endpoint para Cadastrar Images, criar um Endpoint para cadastro Produto
-        link_upload = []
+        link_upload = []        
         data = {
             'Cnome_produto': nome_produto_cadastro.value,
             'Cdescricao_produto_cadastro':descricao_produto_cadastro.value,
@@ -85,63 +95,56 @@ def main(page: ft.Page):
         }
         
         for f in list_img_to_cadastrar:
-            with open(f.path, 'rb') as file_obj:
-                print('abriu o path')
-                try:
-                    files = {'file': (f.name, file_obj, 'application/octet-stream')}
-                    response = requests.post(api_url, files=files)
-            
-                    if response.status_code == 200:
-                        dados = response.json()
-                        link_upload.append(dados['url'])
-                        print(link_upload)
-                        print('UPLOAD FEITO')
-                    else:
-                        print(f'O NOSSO CÓDIGO DE RESPOSTA FOI {response.status_code}')
-                except Exception as e:
-                    print(f'Erro ao enviar através do Path {e}')
+            upload_dir = 'assets/uploads/'
+            try:
+                with open(f'{upload_dir}{f.name}', 'rb') as f:
+                    print('abriu o path')
+                    try:
+                        files = {'file': (f.name, f, 'application/octet-stream')}
+                        response = requests.post(api_url, files=files)
+
+                        if response.status_code == 200:
+                            dados = response.json()
+                            link_upload.append(dados['url'])
+                            print(link_upload)
+                            print('UPLOAD FEITO')
+                        else:
+                            print(f'O NOSSO CÓDIGO DE RESPOSTA FOI {response.status_code}')
+                    except Exception as e:
+                        print(f'Erro ao enviar através do Path {e}')
+            except Exception as e:
+                print(f'deu tudo errado {e}')
             data['Cimages'] = link_upload
+        print(data)
         
-    
-
-
     frame_cadastro_produto = ft.Container(
-        content=ft.Column(
-            controls=[
-                ft.Row(
-                    controls=[
-                        ft.Column(
-                            controls=[
-                                btn_add_img_to_cadastrar,
-                                ft.ElevatedButton(text="Cadastrar Produto", on_click=cadastrar_produto)
-                            ],
-                            alignment=ft.MainAxisAlignment.CENTER
-                        ),
-                        ft.Column(
-                            controls=[
-                                frame_images_cadastro,
-                                nome_produto_cadastro,
-                                descricao_produto_cadastro,
-                                Valor_promocional,
-                                codigo_produto
-                            ]
-                        ),
-                        ft.Column(
-                            controls=[
-                                unidade_de_medida,
-                                quantidade_estoque,
-                                link_produto
-                            ]
-                        )
-                    ]
-                )
-            ]
+        content=ft.Container(
+            ft.Column(
+                controls=[
+                    ft.Row(
+                        controls=[
+                            btn_add_img_to_cadastrar,
+                            frame_images_cadastro
+                        ]
+                    ),
+                    nome_produto_cadastro,
+                    Valor_promocional,
+                    codigo_produto,
+                    unidade_de_medida,
+                    quantidade_estoque,
+                    link_produto,
+                    descricao_produto_cadastro
+
+                ],
+                spacing=7,
+            ),
+            margin=10
         ),
         visible=False,
         bgcolor='#838383',
         border_radius=30,
-        width=890,
-        margin=0
+        width=600,
+        margin=10
     )
 
     def show_cadastro(e):
@@ -376,4 +379,4 @@ def main(page: ft.Page):
 
 
 port = int(os.environ.get("PORT", 8080))
-ft.app(target=main, upload_dir='assets/uploads', assets_dir='assets')
+ft.app(target=main, view=ft.WEB_BROWSER,upload_dir='assets/uploads', assets_dir='assets')
