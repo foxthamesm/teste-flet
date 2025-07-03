@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-flet==0.27.6
-=======
 flet==0.24.1
 flet_core==0.24.1
 fletcarousel==0.0.13
->>>>>>> a78a355c162360b1ffa951b245841d0dbb05e1db
