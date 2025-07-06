@@ -609,10 +609,10 @@ def menu(page: ft.Page):
                             carrosel,
                             ft.Column(
                                 controls=[
-                                    ft.Text(f'Nome: {data_list_product['nome']}    Cod. {data_list_product['codigo_produto']}'),
-                                    ft.Text(f'Descrição: {data_list_product['descricao']}'),
-                                    ft.Text(f'Valor: {data_list_product['preco_venda']}'),
-                                    ft.Text(f'qntd. estoque: {data_list_product['qtd_estoque']}'),
+                                    ft.Text(f"Nome: {data_list_product['nome']}    Cod. {data_list_product['codigo_produto']}"),
+                                    ft.Text(f"Descrição: {data_list_product['descricao']}"),
+                                    ft.Text(f"Valor: {data_list_product['preco_venda']}"),
+                                    ft.Text(f"qntd. estoque: {data_list_product['qtd_estoque']}"),
                                     ft.ElevatedButton('open', on_click= lambda e: show_editar(e, data_list_product))
                                 ],
                                 alignment=ft.MainAxisAlignment.CENTER,
