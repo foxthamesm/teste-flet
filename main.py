@@ -2,10 +2,14 @@ import sys
 import os
 import requests
 import flet as ft
-from views.login import login_view
-from views.menu import menu
-from views.cadastro import cadastro_view
 from views.landing_page import landing_page_view
+from views.login import login_view
+from views.cadastro import cadastro_view
+from views.menu import menu
+from views.produtos import produtos_view
+from views.usuarios import usuarios_view
+
+
 
 
 def main(page: ft.Page):
@@ -16,10 +20,14 @@ def main(page: ft.Page):
             landing_page_view(page)
         elif page.route == "/login":
             login_view(page)
-        elif page.route == "/menu":
-            menu(page)
         elif page.route == "/cadastro":
             cadastro_view(page)
+        elif page.route == "/menu":
+            menu(page)
+        elif page.route == "/produtos":
+            produtos_view(page)
+        elif page.route == "/usuarios":
+            usuarios_view(page)
         else:
             page.add(ft.Text("❌ Rota não encontrada."))
 
