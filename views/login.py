@@ -6,6 +6,8 @@ def login_view(page: ft.Page):
     page.theme = ft.Theme()
     page.theme_mode = ft.ThemeMode.DARK
 
+
+
     mensagem = ft.Text(color=ft.Colors.RED, bgcolor=ft.Colors.WHITE)
 
     usuario_input = ft.TextField(label="Usuário", color=ft.Colors.WHITE, border_color=ft.Colors.WHITE, width=600)
@@ -15,7 +17,10 @@ def login_view(page: ft.Page):
         usuario = usuario_input.value.strip()
         senha = senha_input.value.strip()
         print(f'{usuario} --- {senha}')
+        page.client_storage.set('token', '12345') # Armazenar o token de login para poder usar nas chamadas da API posteriormente
 
+
+        #logica para poder fazer o login
         '''if not usuario or not senha:
             mensagem.value = "⚠️ Preencha todos os campos."
         elif crud_sql.verificar_login(usuario, senha):
@@ -24,7 +29,8 @@ def login_view(page: ft.Page):
             page.go("/menu")
         else:
             mensagem.value = "❌ Usuário ou senha incorretos."'''
-        page.go("/menu")
+        
+        page.go("/menu") # após implementar o a função de login, retirar esta linha
 
     login_btn = ft.ElevatedButton("Entrar", on_click=autenticar)
 
@@ -37,19 +43,7 @@ def login_view(page: ft.Page):
             usuario_input,
             senha_input,
             login_btn,
-            ft.Row(
-                controls=[
-                ft.Text('Não tem conta?'),
-                ft.TextButton(text='Cadastre-se',
-                              style=ft.ButtonStyle(
-                                bgcolor={"": "transparent"},
-                                overlay_color={"": "transparent"},
-                                padding={"": 0},
-                                shape={"": ft.RoundedRectangleBorder(radius=0)},
-                                ),
-                                on_click=page_cadastro
-                            )
-                ]),
+            ft.TextButton(text='Não tem conta? Cadastre-se', on_click=page_cadastro),
             mensagem
         ],
         spacing=20,

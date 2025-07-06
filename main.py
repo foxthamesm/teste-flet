@@ -5,6 +5,7 @@ import flet as ft
 from views.login import login_view
 from views.menu import menu
 from views.cadastro import cadastro_view
+from views.landing_page import landing_page_view
 
 
 def main(page: ft.Page):
@@ -12,6 +13,8 @@ def main(page: ft.Page):
         page.clean()
 
         if page.route == "/":
+            landing_page_view(page)
+        elif page.route == "/login":
             login_view(page)
         elif page.route == "/menu":
             menu(page)
@@ -21,7 +24,7 @@ def main(page: ft.Page):
             page.add(ft.Text("❌ Rota não encontrada."))
 
     page.on_route_change = route_change
-    page.go("/")  # força rota inicial
+    page.go("/") 
 
 port = int(os.environ.get("PORT", 8080))
 ft.app(target=main, view=ft.WEB_BROWSER,upload_dir='assets/uploads', assets_dir='assets')
