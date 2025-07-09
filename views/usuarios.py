@@ -95,11 +95,13 @@ def usuarios_view(page: ft.Page):
         email_input.value = u['email']
         plano_dropdown.value = u['plano']
         usuarios.remove(u)
-        frame_cadastro_usuarios.visible = not frame_cadastro_usuarios.visible
+        if frame_cadastro_usuarios.visible != True:
+            frame_cadastro_usuarios.visible = not frame_cadastro_usuarios.visible
+            page.update()
         atualizar_lista()
 
     def render_usuario(u):
-        return ft.Card(
+        return ft.Container(
             content=
             ft.Column(
                 controls=[
@@ -110,7 +112,13 @@ def usuarios_view(page: ft.Page):
                     ft.IconButton(icon=ft.Icons.DELETE, on_click=lambda e: excluir_usuario(u)),
                     ])
                 ]
-            )    
+                
+            ),
+            padding=20,
+            bgcolor='#838383',
+            border_radius=20    
+
+                
         )
         
 
@@ -125,7 +133,10 @@ def usuarios_view(page: ft.Page):
                 ft.ElevatedButton("Cadastrar", on_click=cadastrar_usuario)
             ]
         ),
-        visible=False
+        visible=False,
+        bgcolor='#838383',
+        padding=ft.padding.only(top=20, left=20, bottom=20, right=20),
+        border_radius=20
     )
 
     frame_listar_usuarios = ft.Container(
@@ -165,11 +176,20 @@ def usuarios_view(page: ft.Page):
                     spacing=100
                 )
             )]
-        )
+        ),
+        bgcolor='#151B38',
+        border_radius=20,
+        padding= ft.padding.only(top=20, left=20)
     )
     
     def show_main_produtos(e):
         page.go("/produtos")
+
+    def show_main_relatorio(e):
+        page.go("/relatorio")
+    
+    def show_main_agendamento(e):
+        page.go("/agendamento")
 
     def show_main_usuarios(e):
         frame_main_usuarios.visible = not frame_main_usuarios.visible
@@ -181,8 +201,8 @@ def usuarios_view(page: ft.Page):
                 ft.ElevatedButton(text='PRODUTOS', on_click=show_main_produtos, color=ft.Colors.WHITE, bgcolor='#222256', width=100, height=37),
                 ft.ElevatedButton(text='USUÁRIOS', on_click=show_main_usuarios,color=ft.Colors.WHITE, bgcolor='#222256', width=100, height=37),
                 ft.ElevatedButton(text='CAMPANHAS', color=ft.Colors.WHITE, bgcolor='#222256', width=110, height=37),
-                ft.ElevatedButton(text='AGENDA', color=ft.Colors.WHITE, bgcolor='#222256', width=100, height=37),
-                ft.ElevatedButton(text='RELATÓRIOS', color=ft.Colors.WHITE, bgcolor='#222256', width=100, height=37),
+                ft.ElevatedButton(text='AGENDA', on_click=show_main_agendamento,color=ft.Colors.WHITE, bgcolor='#222256', width=100, height=37),
+                ft.ElevatedButton(text='RELATÓRIOS', on_click=show_main_relatorio,color=ft.Colors.WHITE, bgcolor='#222256', width=100, height=37),
             ],
             alignment=ft.MainAxisAlignment.CENTER
         ),

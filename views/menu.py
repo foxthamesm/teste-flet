@@ -67,6 +67,8 @@ def menu(page: ft.Page):
     def show_main_usuarios(e):
         page.go("/usuarios")
     
+    def show_main_relatorio(e):
+        page.go("/relatorio")
 
     # cabeçalho - botões
     lista_buttons = ft.Container(
@@ -76,7 +78,7 @@ def menu(page: ft.Page):
                 ft.ElevatedButton(text='USUÁRIOS', on_click=show_main_usuarios,color=ft.Colors.WHITE, bgcolor='#222256', width=100, height=37),
                 ft.ElevatedButton(text='CAMPANHAS', color=ft.Colors.WHITE, bgcolor='#222256', width=110, height=37),
                 ft.ElevatedButton(text='AGENDA', color=ft.Colors.WHITE, bgcolor='#222256', width=100, height=37),
-                ft.ElevatedButton(text='RELATÓRIOS', color=ft.Colors.WHITE, bgcolor='#222256', width=100, height=37),
+                ft.ElevatedButton(text='RELATÓRIOS', on_click=show_main_relatorio,color=ft.Colors.WHITE, bgcolor='#222256', width=100, height=37),
             ],
             alignment=ft.MainAxisAlignment.CENTER,
         ),

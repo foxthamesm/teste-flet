@@ -8,6 +8,8 @@ from views.cadastro import cadastro_view
 from views.menu import menu
 from views.produtos import produtos_view
 from views.usuarios import usuarios_view
+from views.relatorio import relatorio_view
+from views.agendamento import agendamento_views
 
 
 
@@ -28,6 +30,10 @@ def main(page: ft.Page):
             produtos_view(page)
         elif page.route == "/usuarios":
             usuarios_view(page)
+        elif page.route == "/agendamento":
+            agendamento_views(page)
+        elif page.route == "/relatorio":
+            relatorio_view(page)
         else:
             page.add(ft.Text("❌ Rota não encontrada."))
 
